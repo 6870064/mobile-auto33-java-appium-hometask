@@ -150,6 +150,13 @@ public class MainPageObject {
                 3).
                 getLocation().
                 getY();
+
+        if (Platform.getInstance().isMW()){
+            JavascriptExecutor JSExecutor = (JavascriptExecutor)driver;
+            Object js_result = JSExecutor.executeScript("return window.pageYOffset");
+            element_location_by_y -= Integer.parseInt(js_result.toString());
+        }
+
         int screen_size_by_y = driver.manage().window().getSize().getHeight();
         return element_location_by_y < screen_size_by_y;
     }
@@ -219,6 +226,23 @@ public class MainPageObject {
         if (amount_of_elements > 0) {
             String default_message = "An Element '" + locator + "' supposed to be not present";
             throw new AssertionError(default_message + " " + error_message);
+        }
+    }
+
+    public void tryClickElementWithFewAttempts(String locator, String error_message, int amount_of_attempts){
+        int current_attempts = 0;
+        boolean need_more_attempts = true;
+
+        while (need_more_attempts){
+            try {
+                this.waitForElementAndClick(locator, error_message,1);
+                need_more_attempts = false;
+            } catch (Exception e) {
+                if (current_attempts > amount_of_attempts){
+                    this.waitForElementAndClick(locator, error_message, 1);
+                }
+            }
+            ++current_attempts;
         }
     }
 

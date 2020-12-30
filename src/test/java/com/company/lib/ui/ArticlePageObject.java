@@ -15,6 +15,7 @@ abstract public class ArticlePageObject extends MainPageObject {
     FIRST_ARTICLE_DESCRIPTION,
     SAVE_BUTTON,
     ADD_TO_LIST_BUTTON,
+    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
     GOT_IT_BUTTON,
     FIRST_TEXT_INPUT,
     SECOND_TEXT_INPUT,
@@ -40,8 +41,10 @@ abstract public class ArticlePageObject extends MainPageObject {
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getText();
         }
     }
 
@@ -53,10 +56,16 @@ abstract public class ArticlePageObject extends MainPageObject {
                     "Cannot find the end of the article",
                     20
             );
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             this.swipeUpTillElementAppear(FOOTER_ELEMENT,
             "Cannot find the end of the article",
             40);
+        } else {
+            this.scrollWebPageTillElementNotVisible(
+                    FOOTER_ELEMENT,
+                    "Cannot find end of article",
+                    40
+            );
         }
 
     }
@@ -135,20 +144,31 @@ public void addFirstArticleToMyList(String articles_list_title, String articles_
         );
     }
 
-    public void addArticleToSaved(){
-
-    this.waitForElementAndClick(
-    SAVE_BUTTON,
-    "Cannot close article, cannot find option to add article to the reading list",
-    12
-        );
-
-        this.waitForElementAndClick(
-                CLOSE_SYNC_POP_UP_BUTTON,
-                "Cannot tap [x] button on 'Sync your saved articles' pop up",
-                10
-        );
+    public boolean isElementPresent(String locator){
+        return getAmountOfElements(locator) > 0;
     }
+
+    public void addArticleToMySaved(){
+
+        if (Platform.getInstance().isMW()){
+            this.removeArticleFromSavedIfItAdded();
+        }
+    this.waitForElementAndClick(SAVE_BUTTON, "Cannot close article, cannot find option to add article to the reading list", 12);
+    this.waitForElementAndClick(CLOSE_SYNC_POP_UP_BUTTON, "Cannot tap [x] button on 'Sync your saved articles' pop up", 10);
+    }
+
+    public void removeArticleFromSavedIfItAdded(){
+        if (this.isElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON)){
+            this.waitForElementAndClick(
+                    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
+                    "Cannot click button to remove an article from saved",
+                    5);
+            this.waitForElementPresent(
+                    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
+                    "Cannot find button to add an article to saved list after removing it from this list before");
+        }
+    }
+
     public void addSecondArticleToSaved(){
 
         this.waitForElementAndClick(

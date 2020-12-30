@@ -8,6 +8,8 @@ abstract public class NavigationUI extends MainPageObject{
     protected static String
     SEARCH_CANCEL_BUTTON,
     BACK_BUTTON,
+    OPEN_NAVIGATION,
+    MY_LISTS_LINK,
     EXPLORE_BUTTON;
 
     public NavigationUI(RemoteWebDriver driver){
@@ -28,6 +30,19 @@ abstract public class NavigationUI extends MainPageObject{
                         "Cannot tap [<] Back button to close pop up",
                         12);
             }
+        }
+    }
+    public void openNavigation() {
+        if (Platform.getInstance().isMW()){
+            this.waitForElementAndClick(OPEN_NAVIGATION, "Cannot find and clicl open navigation button", 5);
+        } else {
+            System.out.println("Method openNavigation() does nothing for platform " +Platform.getInstance().getPlatformVar());
+        }
+    }
+
+    public void clickMyLists(){
+        if (Platform.getInstance().isMW()){
+            this.tryClickElementWithFewAttempts(MY_LISTS_LINK, "Cannot find navigation button to my list", 5);
         }
     }
 }

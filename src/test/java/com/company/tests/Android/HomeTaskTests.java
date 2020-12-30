@@ -2,10 +2,7 @@ package com.company.tests.Android;
 
 import com.company.lib.CoreTestCase;
 import com.company.lib.Platform;
-import com.company.lib.ui.ArticlePageObject;
-import com.company.lib.ui.MyListsPageObject;
-import com.company.lib.ui.NavigationUI;
-import com.company.lib.ui.SearchPageObject;
+import com.company.lib.ui.*;
 import com.company.lib.ui.factories.ArticlePageObjectFactory;
 import com.company.lib.ui.factories.MyListsPageObjectFactory;
 import com.company.lib.ui.factories.NavigationUIFactory;
@@ -18,10 +15,13 @@ public class HomeTaskTests extends CoreTestCase {
     String articles_list_title = "1-st articles list for reading";
     String articles_list_description = "1-st articles list for reading description";
     String first_word_for_search = "Java";
-    String first_word_for_search_description = "Object-oriented programming language";
+    String first_word_for_search_description = "bject-oriented programming language";
     String second_word_for_search = "Rammstein";
     String second_word_for_search_description = "German industrial metal band";
     String word_for_empty_search = "zedqazss pewwqsd frtd zzz";
+    private static final String
+    login = "Dzmitry v",
+    password = "SSyj/U+raf3KMy3";
 
     @Test
     public void testCompareOneArticleTitle(){ //Ex.3
@@ -69,11 +69,25 @@ public class HomeTaskTests extends CoreTestCase {
         if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addFirstArticleToMyList(articles_list_title, articles_list_description);
         } else {
-            ArticlePageObject.addArticleToSaved();
+            ArticlePageObject.addArticleToMySaved();
+        }
+
+        if (Platform.getInstance().isMW()) {
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(login, password);
+            Auth.submitForm();
+
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals("We are not on the same page after login",
+                    article_title,
+                    ArticlePageObject.getArticleTitle());
         }
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.backNavigation();
+        NavigationUI.openNavigation();
 
         SearchPageObject.initSearchInput();
         SearchPageObject.SearchFieldClear();
@@ -117,6 +131,9 @@ public class HomeTaskTests extends CoreTestCase {
     @Test
     public void testChangesScreenOrientationFirst(){ // Ex7*: Поворот экрана Тест. Первый тест, который падает после смены ориентации
 
+        if (Platform.getInstance().isMW()){
+            return;
+        }
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.typeSkipElement();
@@ -129,6 +146,10 @@ public class HomeTaskTests extends CoreTestCase {
 
     @Test
     public void testChangesScreenOrientationSecond() { // Ex7*: Поворот экрана Тест. Второй тест, идущий в Portrait orientation вслед за "упавшим" первым
+
+        if (Platform.getInstance().isMW()){
+            return;
+        }
 
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 

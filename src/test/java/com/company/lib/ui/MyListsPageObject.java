@@ -16,6 +16,7 @@ abstract public class MyListsPageObject extends MainPageObject {
     DELETE_FIRST_ARTICLE_TITLE,
     SECOND_ARTICLE_TITLE,
     ARTICLE_BY_TITLE_TPL,
+    REMOVE_FROM_SAVED_BUTTON,
     SAVED_BUTTON;
 
     public void myListOpening(String articles_list_title){
@@ -32,15 +33,24 @@ abstract public class MyListsPageObject extends MainPageObject {
                 "Cannot find saved article"
         );
 
-        if (Platform.getInstance().isIOS()){
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()){
             this.clickElementToTheRightUpperCorner(DELETE_FIRST_ARTICLE_TITLE,"Cannot find saved article for swipe");
+        } else {
+            String remove_locator = getRemoveButtonByTitle(article_title);
+            this.waitForElementAndClick(
+                    remove_locator,
+                    "Cannot click button to remove article from saved",
+                    10);
+        }
+        if(Platform.getInstance().isMW()){
+            driver.navigate().refresh();
         }
 
-        waitForElementNotPresent(
-                DELETE_FIRST_ARTICLE_TITLE,
-                "Cannot delete saved article",
-                5
-        );
+        waitForElementNotPresent(DELETE_FIRST_ARTICLE_TITLE, "Cannot delete saved article", 5);
+    }
+
+    private static String getRemoveButtonByTitle(String article_title){
+        return REMOVE_FROM_SAVED_BUTTON.replace("{TITLE}", article_title);
     }
 
     public void articleAvailabilityCheck(String second_word_for_search){

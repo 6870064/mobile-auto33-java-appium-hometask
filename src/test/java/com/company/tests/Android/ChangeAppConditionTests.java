@@ -23,6 +23,10 @@ public class ChangeAppConditionTests extends CoreTestCase {
 
     @Test
     public void testChangeScreenOrientationOnSearchResults() {
+
+        if (Platform.getInstance().isMW()){
+            return;
+        }
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         if (driver instanceof AppiumDriver) {
@@ -58,6 +62,10 @@ public class ChangeAppConditionTests extends CoreTestCase {
 
     @Test
     public void testCheckSearchArticleInBackground(){
+
+        if (Platform.getInstance().isMW()){
+            return;
+        }
 
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 

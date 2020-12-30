@@ -14,7 +14,7 @@ public class ArticleTests extends CoreTestCase {
     String articles_list_title = "1-st articles list for reading";
     String articles_list_description = "1-st articles list for reading description";
     String first_word_for_search = "Java";
-    String first_word_for_search_description = "Object-oriented programming language";
+    String first_word_for_search_description = "bject-oriented programming language";
     String second_word_for_search = "Rammstein";
     String second_word_for_search_description = "German industrial metal band";
     String word_for_empty_search = "zedqazss pewwqsd frtd zzz";
